@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtGui import QSyntaxHighlighter
+from PyQt5.QtGui import QSyntaxHighlighter, QFont
 from mainui import Ui_MainWindow
 from childui import Ui_ChildWindow
 import sys
@@ -26,7 +26,6 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.ui.label_cred.setStyleSheet('color: red')
         self.ui.lineEdit_pass.setEchoMode(QtWidgets.QLineEdit.Password)
-        self.ui.ContinueButton.setEnabled(False)
         # bind events
         self.ui.lineEdit_pass.textEdited.connect(self.InputFieldCheck)
         self.ui.lineEdit_name.textEdited.connect(self.InputFieldCheck)
@@ -79,7 +78,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_send_dat.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send_dat))
         self.ui.pushButton_save_dat.clicked.connect(self.file_save)
         self.ui.pushButton_clear.clicked.connect(self.clear_file)
-        self.action = QAction("back")
+        self.action = QAction("Back")
         self.ui.menubar.addAction(self.action)
         self.action.triggered.connect(self.menu_back)
         self.ui.comboBox_direction_check.addItems(['INBOUND', 'OUTBOUND'])
@@ -214,11 +213,9 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.label_error_dat.clear()
         
 # Program start
-w = 900
-h = 600
+
 app = QtWidgets.QApplication([])
 application = mywindow()
-application.resize(w, h)
 application.show()
 
 sys.exit(app.exec())
