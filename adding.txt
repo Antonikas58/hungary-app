@@ -3,3 +3,4 @@ from QCodeEditor import QCodeEditor, XMLHighlighter
 self.textEdit = QCodeEditor(DISPLAY_LINE_NUMBERS=True, 
                             HIGHLIGHT_CURRENT_LINE=True,
                             SyntaxHighlighter=XMLHighlighter)
+

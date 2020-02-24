@@ -91,42 +91,48 @@ class mywindow(QtWidgets.QMainWindow):
 
     def SendToCPI(self, btn):
         if btn == self.ui.pushButton_send:
+            self.Clear_labels()
             resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTaxpayer', '', '', self.ui.lineEdit_check_id.text(), self.ui.lineEdit_tax_id.text())
             try:
                 self.result_set = Find_result_set(resp)
+                self.ui.label_error.setText('Transmission Successfull. If result is empty - nothing was found')    
+                self.ui.label_error.setStyleSheet('color: green') 
             except:
                 self.ui.label_error.setText(resp)    
                 self.ui.label_error.setStyleSheet('color: red') 
 
-            self.Clear_labels()
             self.FillLabels()
             if self.result_set.get('ErrorText') != None:
                 self.ui.label_error.setText('Something went wrong during Iflow processing.Please go to CPI Tenant and check trace logs')
                 self.ui.label_error.setStyleSheet('color: red')
 
         elif btn == self.ui.pushButton_send_check:
+            self.Clear_labels()
             resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceCheck', self.ui.comboBox_direction_check.currentText(), self.ui.lineEdit_inv_num_check.text(), self.ui.lineEdit_tax_id_check_2.text(), self.ui.lineEdit_tax_id_check.text())
             try:
                 self.result_set = Find_result_set(resp)
+                self.ui.label_error_check.setText('Transmission Successfull. If result is empty - nothing was found')
+                self.ui.label_error_check.setStyleSheet('color: green')  
             except:
                 self.ui.label_error_check.setText(resp)
                 self.ui.label_error_check.setStyleSheet('color: red')      
       
-            self.Clear_labels()
             self.FillLabels()
             if self.result_set.get('ErrorText') != None:
                 self.ui.label_error_check.setText('Something went wrong during Iflow processing.Please go to CPI Tenant and check trace logs')
                 self.ui.label_error_check.setStyleSheet('color: red')            
             
         elif btn == self.ui.pushButton_send_dat:
+            self.Clear_labels()
             resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceData', self.ui.comboBox_direction_dat.currentText(), self.ui.lineEdit_inv_num_dat.text(), self.ui.lineEdit_tax_id_dat_2.text(), self.ui.lineEdit_tax_id_dat.text())
             try:
                 self.result_set = Find_result_set(resp)
+                self.ui.label_error_dat.setText('Transmission Successfull. If result is empty - nothing was found')     
+                self.ui.label_error_dat.setStyleSheet('color: green') 
             except:
                 self.ui.label_error_dat.setText(resp)     
                 self.ui.label_error_dat.setStyleSheet('color: red') 
                 
-            self.Clear_labels()
             self.FillLabels()
             if self.result_set.get('ErrorText') != None:
                 self.ui.label_error_dat.setText('Something went wrong during Iflow processing.Please go to CPI Tenant and check trace logs')

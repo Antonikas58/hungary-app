@@ -161,7 +161,7 @@ QWidget:item:selected
           <property name="font">
            <font>
             <family>MS Sans Serif</family>
-            <pointsize>10</pointsize>
+            <pointsize>14</pointsize>
            </font>
           </property>
           <property name="styleSheet">
@@ -179,6 +179,12 @@ QWidget:item:selected
             <width>400</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>14</pointsize>
+           </font>
           </property>
           <property name="cursor">
            <cursorShape>IBeamCursor</cursorShape>
@@ -218,7 +224,7 @@ QWidget:item:selected
           <property name="font">
            <font>
             <family>MS Sans Serif</family>
-            <pointsize>10</pointsize>
+            <pointsize>14</pointsize>
            </font>
           </property>
           <property name="styleSheet">
@@ -236,6 +242,12 @@ QWidget:item:selected
             <width>400</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>14</pointsize>
+           </font>
           </property>
           <property name="cursor">
            <cursorShape>IBeamCursor</cursorShape>
@@ -1109,7 +1121,9 @@ QComboBox:hover,QPushButton:hover
           <property name="font">
            <font>
             <family>MS Sans Serif</family>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
@@ -1162,7 +1176,7 @@ QWidget:item:selected
           <property name="font">
            <font>
             <family>MS Sans Serif</family>
-            <pointsize>10</pointsize>
+            <pointsize>14</pointsize>
            </font>
           </property>
           <property name="styleSheet">
@@ -1180,6 +1194,12 @@ QWidget:item:selected
             <width>400</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>14</pointsize>
+           </font>
           </property>
           <property name="cursor">
            <cursorShape>IBeamCursor</cursorShape>
@@ -1213,7 +1233,7 @@ QWidget:item:selected
           <property name="font">
            <font>
             <family>MS Sans Serif</family>
-            <pointsize>10</pointsize>
+            <pointsize>14</pointsize>
            </font>
           </property>
           <property name="styleSheet">
@@ -1237,6 +1257,12 @@ QWidget:item:selected
             <width>400</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>14</pointsize>
+           </font>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;taxpayer id for company that you want to check&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1264,7 +1290,7 @@ QWidget:item:selected
           <property name="font">
            <font>
             <family>MS Sans Serif</family>
-            <pointsize>10</pointsize>
+            <pointsize>14</pointsize>
            </font>
           </property>
           <property name="styleSheet">
@@ -1282,6 +1308,12 @@ QWidget:item:selected
             <width>400</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>14</pointsize>
+           </font>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Invoice number to check&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1309,7 +1341,7 @@ QWidget:item:selected
           <property name="font">
            <font>
             <family>MS Sans Serif</family>
-            <pointsize>10</pointsize>
+            <pointsize>14</pointsize>
            </font>
           </property>
           <property name="styleSheet">
@@ -1327,6 +1359,12 @@ QWidget:item:selected
             <width>400</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>14</pointsize>
+           </font>
           </property>
           <property name="cursor">
            <cursorShape>PointingHandCursor</cursorShape>
@@ -1506,7 +1544,9 @@ QComboBox:hover,QPushButton:hover
           <property name="font">
            <font>
             <family>MS Sans Serif</family>
-            <pointsize>10</pointsize>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
@@ -1561,7 +1601,7 @@ QWidget:item:selected
             <property name="font">
              <font>
               <family>MS Sans Serif</family>
-              <pointsize>10</pointsize>
+              <pointsize>14</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -1583,7 +1623,7 @@ QWidget:item:selected
             <property name="font">
              <font>
               <family>MS Sans Serif</family>
-              <pointsize>10</pointsize>
+              <pointsize>14</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -1605,7 +1645,7 @@ QWidget:item:selected
             <property name="font">
              <font>
               <family>MS Sans Serif</family>
-              <pointsize>10</pointsize>
+              <pointsize>14</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -1802,6 +1842,12 @@ QWidget:item:selected
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <family>MS Sans Serif</family>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
             <property name="cursor">
              <cursorShape>IBeamCursor</cursorShape>
             </property>
@@ -1837,6 +1883,12 @@ QWidget:item:selected
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <family>MS Sans Serif</family>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;invoice number to get data &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -1871,6 +1923,12 @@ QWidget:item:selected
               <width>0</width>
               <height>38</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>MS Sans Serif</family>
+              <pointsize>14</pointsize>
+             </font>
             </property>
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
@@ -2141,7 +2199,7 @@ QComboBox:hover,QPushButton:hover
             <property name="font">
              <font>
               <family>MS Sans Serif</family>
-              <pointsize>10</pointsize>
+              <pointsize>14</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -2159,6 +2217,12 @@ QComboBox:hover,QPushButton:hover
               <width>400</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>MS Sans Serif</family>
+              <pointsize>14</pointsize>
+             </font>
             </property>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;taxpayer id for company that you want to check&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -2180,7 +2244,9 @@ QComboBox:hover,QPushButton:hover
             <property name="font">
              <font>
               <family>MS Sans Serif</family>
-              <pointsize>10</pointsize>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
              </font>
             </property>
             <property name="styleSheet">
@@ -2311,7 +2377,7 @@ QComboBox:hover,QPushButton:hover
      <x>0</x>
      <y>0</y>
      <width>852</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="styleSheet">
