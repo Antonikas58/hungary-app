@@ -20,7 +20,7 @@ def Ping( address, name, passw):
     except:
         return False  
       
-def CallCPI( address, name, passw, operation, direction, number, checkId, taxId):
+def CallCPI( address, name, passw, operation, direction, number,taxId, checkId ):
 
     AuthData = name + ':' + passw
     base64Data = (base64.b64encode(AuthData.encode("utf-8"))).decode('utf-8')
