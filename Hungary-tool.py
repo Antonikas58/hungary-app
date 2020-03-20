@@ -5,7 +5,7 @@ from childui import Ui_ChildWindow
 import sys
 from request import Ping, CallCPI
 from functools import partial
-from xmlparser import Find_result_set
+from xmlparser import Find_result_set, Find_Element_value, Parse_Transaction_List
 import xml.dom.minidom
 import base64
 from PyQt5.QtWidgets import QFileDialog, QAction, QCompleter
@@ -16,6 +16,7 @@ class mywindow(QtWidgets.QMainWindow):
     Usr = None
     Pass = None
     result_set = {}
+    result_list = []
     invoice = None
     file_name = None
     db = TinyDB('db.json') 
@@ -78,6 +79,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_send.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send))
         self.ui.pushButton_send_check.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send_check))
         self.ui.pushButton_send_dat.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send_dat))
+        self.ui.pushButton_send_list.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send_list))
         self.ui.pushButton_save_dat.clicked.connect(self.file_save)
         self.ui.pushButton_clear.clicked.connect(self.clear_file)
         self.action = QAction("Back")
@@ -85,7 +87,9 @@ class mywindow(QtWidgets.QMainWindow):
         self.action.triggered.connect(self.menu_back)
         self.ui.comboBox_direction_check.addItems(['INBOUND', 'OUTBOUND'])
         self.ui.comboBox_direction_dat.addItems(['INBOUND', 'OUTBOUND'])
-
+        self.ui.TimeEdit_from_list.setDisplayFormat("yyyy-MM-dd'T'HH:mm:ss'.000Z" )
+        self.ui.TimeEdit_to_list.setDisplayFormat("yyyy-MM-dd'T'HH:mm:ss'.000Z" )
+        
     def menu_back(self):
         self.window.hide()
         self.__init__()
@@ -93,8 +97,10 @@ class mywindow(QtWidgets.QMainWindow):
 
     def SendToCPI(self, btn):
         if btn == self.ui.pushButton_send:
+          
+            self.result_set = {}
             self.Clear_labels()
-            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTaxpayer', '', '', self.ui.lineEdit_tax_id.text(), self.ui.lineEdit_check_id.text())
+            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTaxpayer', '', '', self.ui.lineEdit_tax_id.text(), self.ui.lineEdit_check_id.text(),'','','')
             try:
                 self.result_set = Find_result_set(resp)
                 self.ui.label_error.setText('Transmission Successfull. If result is empty - nothing was found')    
@@ -109,8 +115,10 @@ class mywindow(QtWidgets.QMainWindow):
                 self.ui.label_error.setStyleSheet('color: red')
 
         elif btn == self.ui.pushButton_send_check:
+          
+            self.result_set = {}
             self.Clear_labels()
-            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceCheck', self.ui.comboBox_direction_check.currentText(), self.ui.lineEdit_inv_num_check.text(), self.ui.lineEdit_tax_id_check.text(),'')
+            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceCheck', self.ui.comboBox_direction_check.currentText(), self.ui.lineEdit_inv_num_check.text(), self.ui.lineEdit_tax_id_check.text(),'','','','')
             try:
                 self.result_set = Find_result_set(resp)
                 self.ui.label_error_check.setText('Transmission Successfull. If result is empty - nothing was found')
@@ -125,8 +133,10 @@ class mywindow(QtWidgets.QMainWindow):
                 self.ui.label_error_check.setStyleSheet('color: red')            
             
         elif btn == self.ui.pushButton_send_dat:
+          
+            self.result_set = {}
             self.Clear_labels()
-            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceData', self.ui.comboBox_direction_dat.currentText(), self.ui.lineEdit_inv_num_dat.text(), self.ui.lineEdit_tax_id_dat.text(),'')
+            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceData', self.ui.comboBox_direction_dat.currentText(), self.ui.lineEdit_inv_num_dat.text(), self.ui.lineEdit_tax_id_dat.text(),'','','','')
             try:
                 self.result_set = Find_result_set(resp)
                 self.ui.label_error_dat.setText('Transmission Successfull. If result is empty - nothing was found')     
@@ -139,7 +149,41 @@ class mywindow(QtWidgets.QMainWindow):
             if self.result_set.get('ErrorText') != None:
                 self.ui.label_error_dat.setText('Something went wrong during Iflow processing.Please go to CPI Tenant and check trace logs')
                 self.ui.label_error_dat.setStyleSheet('color: red')
-
+                
+        elif btn == self.ui.pushButton_send_list:
+            
+            self.result_list = []
+            self.result_set = {}
+            self.Clear_labels()
+            page = '1'
+            pages = ''
+            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page )
+            try:
+                self.result_set = Find_result_set(resp)
+                if self.result_set.get('ErrorText') != None:
+                    self.ui.label_error_list.setText('Something went wrong during Iflow processing.Please go to CPI Tenant and check trace logs')
+                    self.ui.label_error_list.setStyleSheet('color: red')
+                else:
+                    self.result_set = {}
+                    
+                    self.result_list = Parse_Transaction_List(resp, self.result_list)
+                    pages = Find_Element_value(resp, 'availablePage')
+                    self.ui.label_error_list.setText('Transmission Successfull. If result is empty - nothing was found')     
+                    self.ui.label_error_list.setStyleSheet('color: green')  
+            except:
+                self.ui.label_error_list.setText(resp)     
+                self.ui.label_error_list.setStyleSheet('color: red') 
+            if pages != '':                    
+                while int(page) < int(pages):
+                    page = str(int(page) + 1)
+                    resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page )
+                    try:
+                        self.result_list = Parse_Transaction_List(resp, self.result_list)
+                    except:    
+                        self.ui.label_error_list.setText('Could not read all information from NAV, please try to start again')     
+                        self.ui.label_error_list.setStyleSheet('color: red') 
+                        self.result_list = []
+            self.Fill_table_list()
 
     def FillLabels(self):
         self.ui.label_val_.setText(self.result_set.get('taxpayerValidity'))
@@ -172,7 +216,17 @@ class mywindow(QtWidgets.QMainWindow):
             highlighter = QSyntaxHighlighter(self.ui.textEdit)
         except:
             pass
-
+    def Fill_table_list(self):
+      
+        self.ui.table_list.setRowCount(0)
+        for item in self.result_list:
+            rowPosition = self.ui.table_list.rowCount()
+            self.ui.table_list.insertRow(rowPosition)
+            self.ui.table_list.setItem(rowPosition , 0, QtWidgets.QTableWidgetItem(item['transactionId']))
+            self.ui.table_list.setItem(rowPosition , 1, QtWidgets.QTableWidgetItem(item['insDate']))
+            self.ui.table_list.setItem(rowPosition , 2, QtWidgets.QTableWidgetItem(item['originalRequestVersion']))   
+            self.ui.table_list.setItem(rowPosition , 3, QtWidgets.QTableWidgetItem(item['itemCount']))
+            
 
     def file_save(self):
         self.file_name = self.ui.lineEdit_inv_num_dat.text() + '.xml'
@@ -219,6 +273,8 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.label_error.clear()
         self.ui.label_error_check.clear()
         self.ui.label_error_dat.clear()
+        self.ui.label_error_list.clear()
+        self.ui.table_list.clearContents()
     def Fill_db(self):
         Credent = Query()
         

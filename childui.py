@@ -8,7 +8,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from QCodeEditor import QCodeEditor, XMLHighlighter
+
 
 class Ui_ChildWindow(object):
     def setupUi(self, ChildWindow):
@@ -25,24 +25,7 @@ class Ui_ChildWindow(object):
         ChildWindow.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.centralwidget = QtWidgets.QWidget(ChildWindow)
         self.centralwidget.setAutoFillBackground(False)
-        self.centralwidget.setStyleSheet("\n"
-"\n"
-"QTreeView, QListView\n"
-"{\n"
-"    background-color: silver;\n"
-"    margin-left: 5px;\n"
-"}\n"
-"\n"
-"QWidget:item:hover\n"
-"{\n"
-"    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #ca0619);\n"
-"    color: #000000;\n"
-"}\n"
-"\n"
-"QWidget:item:selected\n"
-"{\n"
-"    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);\n"
-"}")
+        self.centralwidget.setStyleSheet("")
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -69,7 +52,7 @@ class Ui_ChildWindow(object):
         self.tabWidget.setMovable(False)
         self.tabWidget.setObjectName("tabWidget")
         self.getTaxpayerTab = QtWidgets.QWidget()
-        self.getTaxpayerTab.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.getTaxpayerTab.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.getTaxpayerTab.setMouseTracking(False)
         self.getTaxpayerTab.setToolTip("")
         self.getTaxpayerTab.setStyleSheet("QWidget\n"
@@ -541,6 +524,7 @@ class Ui_ChildWindow(object):
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.label_error)
         self.tabWidget.addTab(self.getTaxpayerTab, "")
         self.checkInvoiceTab = QtWidgets.QWidget()
+        self.checkInvoiceTab.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.checkInvoiceTab.setStyleSheet("QWidget\n"
 "{\n"
 "    color: #b1b1b1;\n"
@@ -758,6 +742,7 @@ class Ui_ChildWindow(object):
         self.formLayout_3.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.label_result_check)
         self.tabWidget.addTab(self.checkInvoiceTab, "")
         self.getInvoiceDataTab = QtWidgets.QWidget()
+        self.getInvoiceDataTab.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.getInvoiceDataTab.setStyleSheet("QWidget\n"
 "{\n"
 "    color: #b1b1b1;\n"
@@ -1092,9 +1077,7 @@ class Ui_ChildWindow(object):
         self.horizontalLayout.addLayout(self.formLayout_2)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.textEdit = QCodeEditor(DISPLAY_LINE_NUMBERS=True, 
-                            HIGHLIGHT_CURRENT_LINE=True,
-                            SyntaxHighlighter=XMLHighlighter)
+        self.textEdit = QtWidgets.QPlainTextEdit(self.getInvoiceDataTab)
         font = QtGui.QFont()
         font.setFamily("MS Sans Serif")
         font.setPointSize(10)
@@ -1171,7 +1154,225 @@ class Ui_ChildWindow(object):
         self.verticalLayout_3.addWidget(self.pushButton_clear)
         self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.tabWidget.addTab(self.getInvoiceDataTab, "")
-        self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
+        self.getTransactionListTab = QtWidgets.QWidget()
+        self.getTransactionListTab.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        self.getTransactionListTab.setStyleSheet("QTableWidget:item:hover\n"
+"{\n"
+"    background-color: rgb(170, 255, 255);\n"
+"}\n"
+"\n"
+"\n"
+"QTableWidget:item\n"
+"{\n"
+"   \n"
+"    font: 10pt \"MS Sans Serif\";\n"
+"    background-color: rgb(255, 255, 255);\n"
+"    color: rgb(0, 0, 0);\n"
+"}\n"
+"\n"
+"")
+        self.getTransactionListTab.setObjectName("getTransactionListTab")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.getTransactionListTab)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.formLayout_4 = QtWidgets.QFormLayout()
+        self.formLayout_4.setObjectName("formLayout_4")
+        self.label_3 = QtWidgets.QLabel(self.getTransactionListTab)
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(14)
+        self.label_3.setFont(font)
+        self.label_3.setStyleSheet("QLabel {\n"
+"\n"
+"    color: #b1b1b1;\n"
+"}")
+        self.label_3.setObjectName("label_3")
+        self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_3)
+        self.lineEdit_id_list = QtWidgets.QLineEdit(self.getTransactionListTab)
+        self.lineEdit_id_list.setMaximumSize(QtCore.QSize(400, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(14)
+        self.lineEdit_id_list.setFont(font)
+        self.lineEdit_id_list.setStyleSheet("QLineEdit\n"
+"{\n"
+"       color: #b1b1b1;\n"
+"    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4d4d4d, stop: 0 #646464, stop: 1 #5d5d5d);\n"
+"    padding: 1px;\n"
+"    border-style: solid;\n"
+"    border: 1px solid #1e1e1e;\n"
+"    border-radius: 5;\n"
+"}")
+        self.lineEdit_id_list.setObjectName("lineEdit_id_list")
+        self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.lineEdit_id_list)
+        self.label_4 = QtWidgets.QLabel(self.getTransactionListTab)
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(14)
+        self.label_4.setFont(font)
+        self.label_4.setStyleSheet("QLabel {\n"
+"\n"
+"    color: #b1b1b1;\n"
+"}")
+        self.label_4.setObjectName("label_4")
+        self.formLayout_4.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_4)
+        self.TimeEdit_from_list = QtWidgets.QDateTimeEdit(self.getTransactionListTab)
+        self.TimeEdit_from_list.setMaximumSize(QtCore.QSize(400, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(14)
+        self.TimeEdit_from_list.setFont(font)
+        self.TimeEdit_from_list.setStyleSheet("QDateTimeEdit {\n"
+"\n"
+"    color: #b1b1b1;\n"
+"}")
+        self.TimeEdit_from_list.setObjectName("TimeEdit_from_list")
+        self.formLayout_4.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.TimeEdit_from_list)
+        self.label_5 = QtWidgets.QLabel(self.getTransactionListTab)
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(14)
+        self.label_5.setFont(font)
+        self.label_5.setStyleSheet("QLabel {\n"
+"\n"
+"    color: #b1b1b1;\n"
+"}")
+        self.label_5.setObjectName("label_5")
+        self.formLayout_4.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_5)
+        self.TimeEdit_to_list = QtWidgets.QDateTimeEdit(self.getTransactionListTab)
+        self.TimeEdit_to_list.setMaximumSize(QtCore.QSize(400, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(14)
+        self.TimeEdit_to_list.setFont(font)
+        self.TimeEdit_to_list.setStyleSheet("QDateTimeEdit {\n"
+"\n"
+"    color: #b1b1b1;\n"
+"}")
+        self.TimeEdit_to_list.setObjectName("TimeEdit_to_list")
+        self.formLayout_4.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.TimeEdit_to_list)
+        self.pushButton_send_list = QtWidgets.QPushButton(self.getTransactionListTab)
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.pushButton_send_list.setFont(font)
+        self.pushButton_send_list.setStyleSheet("QPushButton\n"
+"{\n"
+"    color: #b1b1b1;\n"
+"    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);\n"
+"    border-width: 1px;\n"
+"    border-color: #1e1e1e;\n"
+"    border-style: solid;\n"
+"    border-radius: 6;\n"
+"    padding: 3px;\n"
+"    padding-left: 5px;\n"
+"    padding-right: 5px;\n"
+"    min-width: 40px;\n"
+"}\n"
+"\n"
+"QPushButton:pressed\n"
+"{\n"
+"    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);\n"
+"}\n"
+"\n"
+"QComboBox:hover,QPushButton:hover\n"
+"{\n"
+"    border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);\n"
+"}")
+        self.pushButton_send_list.setObjectName("pushButton_send_list")
+        self.formLayout_4.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.pushButton_send_list)
+        self.table_list = QtWidgets.QTableWidget(self.getTransactionListTab)
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.table_list.setFont(font)
+        self.table_list.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.table_list.setAutoFillBackground(False)
+        self.table_list.setStyleSheet("QTableWidget\n"
+"{  \n"
+"    border-width: 1px;\n"
+"    border-color: black;\n"
+"    border-style: solid;\n"
+"    border-radius: 6;\n"
+"    padding: 3px;\n"
+"    padding-left: 5px;\n"
+"    padding-right: 5px;\n"
+"    min-width: 40px;\n"
+"\n"
+"}\n"
+"\n"
+"")
+        self.table_list.setLineWidth(1)
+        self.table_list.setCornerButtonEnabled(True)
+        self.table_list.setColumnCount(5)
+        self.table_list.setObjectName("table_list")
+        self.table_list.setRowCount(0)
+        item = QtWidgets.QTableWidgetItem()
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        item.setFont(font)
+        item.setBackground(QtGui.QColor(0, 0, 0))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        item.setForeground(brush)
+        self.table_list.setHorizontalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        item.setFont(font)
+        self.table_list.setHorizontalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        item.setFont(font)
+        self.table_list.setHorizontalHeaderItem(2, item)
+        item = QtWidgets.QTableWidgetItem()
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        item.setFont(font)
+        self.table_list.setHorizontalHeaderItem(3, item)
+        item = QtWidgets.QTableWidgetItem()
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        item.setFont(font)
+        self.table_list.setHorizontalHeaderItem(4, item)
+        self.table_list.horizontalHeader().setCascadingSectionResizes(False)
+        self.table_list.horizontalHeader().setDefaultSectionSize(200)
+        self.table_list.horizontalHeader().setHighlightSections(True)
+        self.table_list.horizontalHeader().setMinimumSectionSize(39)
+        self.table_list.horizontalHeader().setStretchLastSection(False)
+        self.formLayout_4.setWidget(4, QtWidgets.QFormLayout.SpanningRole, self.table_list)
+        self.label_error_list = QtWidgets.QLabel(self.getTransactionListTab)
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_error_list.setFont(font)
+        self.label_error_list.setText("")
+        self.label_error_list.setObjectName("label_error_list")
+        self.formLayout_4.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.label_error_list)
+        self.gridLayout_2.addLayout(self.formLayout_4, 3, 0, 1, 1)
+        self.tabWidget.addTab(self.getTransactionListTab, "")
+        self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
         ChildWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(ChildWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 852, 24))
@@ -1245,7 +1446,7 @@ class Ui_ChildWindow(object):
         ChildWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(ChildWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(ChildWindow)
 
     def retranslateUi(self, ChildWindow):
@@ -1317,7 +1518,7 @@ class Ui_ChildWindow(object):
         self.label_2.setToolTip(_translate("ChildWindow", "<html><head/><body><p>Contains the boolean result of the check</p></body></html>"))
         self.label_2.setText(_translate("ChildWindow", "Check result:"))
         self.label_result_check.setToolTip(_translate("ChildWindow", "<html><head/><body><p>true if invoice is correct and False in other cases</p></body></html>"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.checkInvoiceTab), _translate("ChildWindow", "Check Invoice"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.checkInvoiceTab), _translate("ChildWindow", "Check invoice"))
         self.label_tax_id_dat.setText(_translate("ChildWindow", "Taxpayer ID:"))
         self.lineEdit_tax_id_dat.setToolTip(_translate("ChildWindow", "<html><head/><body><p>taxpayer id of your company</p></body></html>"))
         self.label_inv_num_dat.setText(_translate("ChildWindow", "Invoice Number:"))
@@ -1342,4 +1543,20 @@ class Ui_ChildWindow(object):
         self.pushButton_save_dat.setText(_translate("ChildWindow", "Save"))
         self.pushButton_clear.setToolTip(_translate("ChildWindow", "<html><head/><body><p>clear current response</p></body></html>"))
         self.pushButton_clear.setText(_translate("ChildWindow", "Clear"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.getInvoiceDataTab), _translate("ChildWindow", "Get Invoice data"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.getInvoiceDataTab), _translate("ChildWindow", "Get invoice data"))
+        self.label_3.setText(_translate("ChildWindow", "Taxpayer ID:"))
+        self.label_4.setText(_translate("ChildWindow", "Date from:"))
+        self.label_5.setText(_translate("ChildWindow", "Date to:"))
+        self.pushButton_send_list.setText(_translate("ChildWindow", "Send"))
+        self.table_list.setSortingEnabled(True)
+        item = self.table_list.horizontalHeaderItem(0)
+        item.setText(_translate("ChildWindow", "Transaction ID"))
+        item = self.table_list.horizontalHeaderItem(1)
+        item.setText(_translate("ChildWindow", "Date"))
+        item = self.table_list.horizontalHeaderItem(2)
+        item.setText(_translate("ChildWindow", "Request version"))
+        item = self.table_list.horizontalHeaderItem(3)
+        item.setText(_translate("ChildWindow", "Item count"))
+        item = self.table_list.horizontalHeaderItem(4)
+        item.setText(_translate("ChildWindow", "Status"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.getTransactionListTab), _translate("ChildWindow", "Get transaction list"))
