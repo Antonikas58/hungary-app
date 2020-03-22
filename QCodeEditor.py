@@ -76,7 +76,7 @@ class XMLHighlighter(QSyntaxHighlighter):
         
         keywordFormat = QTextCharFormat()
         keywordFormat.setForeground(QColor("#000070")) #blue
-        keywordFormat.setFontWeight(QFont.Bold) 
+#        keywordFormat.setFontWeight(QFont.Bold) 
         keywordPatterns = ["\\b?xml\\b", "/>", ">", "<", "</"] 
         self.highlightingRules += [(QRegExp(pattern), keywordFormat)
                 for pattern in keywordPatterns]

@@ -20,22 +20,25 @@ def Ping( address, name, passw):
     except:
         return False  
       
-def CallCPI( address, name, passw, operation, direction, number, checkId, taxId):
+def CallCPI( address, name, passw, operation, direction, number,taxId, checkId, dateFrom, dateTo, page ):
 
     AuthData = name + ':' + passw
     base64Data = (base64.b64encode(AuthData.encode("utf-8"))).decode('utf-8')
     headers = {}
     headers['Content-Type'] = 'text/html;charset=utf-8'
     headers['Authorization'] = 'Basic ' + str(base64Data)
-    body = buildBody(operation, direction, number, checkId, taxId)
+    body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page)
 
     try:
         response = requests.post(address, data = body,  headers=headers)
-        return((response.content).decode('utf-8'))
-   
+        if (response.content).decode('utf-8') == '':
+            return 'failed to call CPI. Please go to the main page and try to Ping tenant '
+        else:  
+            return((response.content).decode('utf-8'))
+        
     except:
         return 'failed to call CPI. Please go to the main page and try to Ping tenant '
-def buildBody(operation, direction, number, checkId, taxId):
+def buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page):
     SOAP_NS = 'http://schemas.xmlsoap.org/soap/envelope/'
     ns_map = {'soap-env': SOAP_NS}  
     ET.register_namespace('soap-env',"http://schemas.xmlsoap.org/soap/envelope/") 
@@ -64,8 +67,13 @@ def buildBody(operation, direction, number, checkId, taxId):
     child8.text = number
     child9 = ET.SubElement(top, 'WebOperation')
     child9.text = operation
-    child0 = ET.SubElement(top, 'Direction')
-    child0.text = direction
-
+    child10 = ET.SubElement(top, 'Direction')
+    child10.text = direction
+    child11 = ET.SubElement(top, 'DateFrom')
+    child11.text = dateFrom
+    child12 = ET.SubElement(top, 'DateTo')
+    child12.text = dateTo
+    child13 = ET.SubElement(top, 'Page')
+    child13.text = page
     return((ET.tostring(env).decode('utf-8')))
     
