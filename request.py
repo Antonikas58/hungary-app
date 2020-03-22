@@ -1,4 +1,6 @@
 import requests
+import aiohttp
+import asyncio
 import base64
 from xml.etree.ElementTree import Element, SubElement, Comment, tostring, ElementTree
 from lxml import etree as ET
@@ -38,6 +40,23 @@ def CallCPI( address, name, passw, operation, direction, number,taxId, checkId, 
         
     except:
         return 'failed to call CPI. Please go to the main page and try to Ping tenant '
+
+async def CallCPI_Async( address, name, passw, operation, direction, number,taxId, checkId, dateFrom, dateTo, page ):
+
+    AuthData = name + ':' + passw
+    base64Data = (base64.b64encode(AuthData.encode("utf-8"))).decode('utf-8')
+    headers = {}
+    headers['Content-Type'] = 'text/html;charset=utf-8'
+    headers['Authorization'] = 'Basic ' + str(base64Data)
+    body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, str(page))
+    
+   
+    async with aiohttp.ClientSession() as session:
+      async with session.post(address, data = body, headers = headers) as response:
+         return ((response.content._buffer[0]).decode('utf-8'))
+
+
+   
 def buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page):
     SOAP_NS = 'http://schemas.xmlsoap.org/soap/envelope/'
     ns_map = {'soap-env': SOAP_NS}  
@@ -76,4 +95,3 @@ def buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, pa
     child13 = ET.SubElement(top, 'Page')
     child13.text = page
     return((ET.tostring(env).decode('utf-8')))
-    

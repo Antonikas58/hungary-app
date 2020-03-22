@@ -3,7 +3,8 @@ from PyQt5.QtGui import QSyntaxHighlighter, QFont
 from mainui import Ui_MainWindow
 from childui import Ui_ChildWindow
 import sys
-from request import Ping, CallCPI
+from request import Ping, CallCPI, CallCPI_Async
+import asyncio
 from functools import partial
 from xmlparser import Find_result_set, Find_Element_value, Parse_Transaction_List
 import xml.dom.minidom
@@ -173,16 +174,24 @@ class mywindow(QtWidgets.QMainWindow):
             except:
                 self.ui.label_error_list.setText(resp)     
                 self.ui.label_error_list.setStyleSheet('color: red') 
-            if pages != '':                    
-                while int(page) < int(pages):
-                    page = str(int(page) + 1)
-                    resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page )
-                    try:
-                        self.result_list = Parse_Transaction_List(resp, self.result_list)
-                    except:    
-                        self.ui.label_error_list.setText('Could not read all information from NAV, please try to start again')     
-                        self.ui.label_error_list.setStyleSheet('color: red') 
-                        self.result_list = []
+
+            if pages != '' and int(page) < int(pages):     
+                page = str(int(page) + 1)
+                ioloop = asyncio.get_event_loop()
+                coroutines = [CallCPI_Async(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page ) for page in range(int(page), int(pages) + 1)]
+                resp = ioloop.run_until_complete(asyncio.gather(*coroutines))
+                for res in resp:
+                  self.result_list = Parse_Transaction_List(res, self.result_list)
+                
+              #  while int(page) < int(pages):
+              #      page = str(int(page) + 1)
+              #      resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page )
+              #      try:
+              #          self.result_list = Parse_Transaction_List(resp, self.result_list)
+              #      except:    
+              #          self.ui.label_error_list.setText('Could not read all information from NAV, please try to start again')     
+              #          self.ui.label_error_list.setStyleSheet('color: red') 
+              #          self.result_list = []
             self.Fill_table_list()
 
     def FillLabels(self):
@@ -307,6 +316,8 @@ class mywindow(QtWidgets.QMainWindow):
                 
             completer_addr = QCompleter(search_help_addr)
             return completer_addr
+
+
 
 # Program start
 
