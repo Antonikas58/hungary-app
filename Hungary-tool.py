@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtGui import QSyntaxHighlighter, QFont
 from mainui import Ui_MainWindow
 from childui import Ui_ChildWindow
-import sys
+import sys, csv
 from request import Ping, CallCPI, CallCPI_Async
 import asyncio
 from functools import partial
@@ -11,6 +11,7 @@ import xml.dom.minidom
 import base64
 from PyQt5.QtWidgets import QFileDialog, QAction, QCompleter
 from tinydb import TinyDB, Query
+
 
 class mywindow(QtWidgets.QMainWindow):
     addr = None
@@ -82,6 +83,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_send_dat.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send_dat))
         self.ui.pushButton_send_list.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send_list))
         self.ui.pushButton_save_dat.clicked.connect(self.file_save)
+        self.ui.pushButton_save_list.clicked.connect(self.table_save)
         self.ui.pushButton_clear.clicked.connect(self.clear_file)
         self.action = QAction("Back")
         self.ui.menubar.addAction(self.action)
@@ -153,11 +155,13 @@ class mywindow(QtWidgets.QMainWindow):
                 
         elif btn == self.ui.pushButton_send_list:
             
+            self.ui.table_list.setRowCount(0)
             self.result_list = []
             self.result_set = {}
             self.Clear_labels()
             page = '1'
             pages = ''
+            # Make first call to get information if there are additional pages available
             resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page )
             try:
                 self.result_set = Find_result_set(resp)
@@ -174,15 +178,30 @@ class mywindow(QtWidgets.QMainWindow):
             except:
                 self.ui.label_error_list.setText(resp)     
                 self.ui.label_error_list.setStyleSheet('color: red') 
-
+                
+            # In case if we have additional pages we make asynchronous call to get all content from them also
             if pages != '' and int(page) < int(pages):     
                 page = str(int(page) + 1)
                 ioloop = asyncio.get_event_loop()
-                coroutines = [CallCPI_Async(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page ) for page in range(int(page), int(pages) + 1)]
-                resp = ioloop.run_until_complete(asyncio.gather(*coroutines))
+                future = asyncio.ensure_future(CallCPI_Async(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page, int(pages) ))
+                resp = ioloop.run_until_complete(future)
+            
                 for res in resp:
-                  self.result_list = Parse_Transaction_List(res, self.result_list)
-                
+                    try:
+                        self.result_set = Find_result_set(res)
+                        if self.result_set.get('ErrorText') != None:
+                            self.ui.label_error_list.setText('Some packages were lost during call. Please restart the process again to get all transactions')
+                            self.ui.label_error_list.setStyleSheet('color: red')
+                        else:
+                            self.result_set = {}
+                        self.result_list = Parse_Transaction_List(res, self.result_list)
+                    except:
+                        self.ui.label_error_list.setText('failed to call CPI. Please go to the main page and try to Ping tenant')     
+                        self.ui.label_error_list.setStyleSheet('color: red') 
+                self.Fill_table_list()     
+            elif pages == page:
+                self.Fill_table_list()        
+                        
               #  while int(page) < int(pages):
               #      page = str(int(page) + 1)
               #      resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page )
@@ -192,7 +211,7 @@ class mywindow(QtWidgets.QMainWindow):
               #          self.ui.label_error_list.setText('Could not read all information from NAV, please try to start again')     
               #          self.ui.label_error_list.setStyleSheet('color: red') 
               #          self.result_list = []
-            self.Fill_table_list()
+                
 
     def FillLabels(self):
         self.ui.label_val_.setText(self.result_set.get('taxpayerValidity'))
@@ -238,17 +257,30 @@ class mywindow(QtWidgets.QMainWindow):
             
 
     def file_save(self):
-        self.file_name = self.ui.lineEdit_inv_num_dat.text() + '.xml'
-        if self.invoice != None:
-            name = QFileDialog.getSaveFileName(self, 'Save File', self.file_name)
-            try:
-                file = open(name[0], 'w')
-                file.write(self.invoice)
-                file.close()
-            except:
-                pass
-
-
+            self.file_name = self.ui.lineEdit_inv_num_dat.text() + '.xml'
+            if self.invoice != None:
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.file_name)
+                try:
+                    file = open(name[0], 'w')
+                    file.write(self.invoice)
+                    file.close()
+                except:
+                    pass
+    def table_save(self):
+        path = QFileDialog.getSaveFileName(self, 'Save File', '', 'CSV(*.csv)')
+        
+        with open(path[0], 'wb') as stream:
+                writer = csv.writer(stream)
+                for row in range(self.ui.table_list.rowCount()):
+                    rowdata = []
+                    for column in range(self.ui.table_list.columnCount()):
+                        item = self.ui.table_list.item(row, column)
+                        if item is not None:
+                            rowdata.append( item.text() )
+                        else:
+                            rowdata.append('')
+                    writer.writerow(rowdata)
+        
     def clear_file(self):
         self.invoice = None
         self.ui.textEdit.setPlainText(self.invoice)
@@ -284,6 +316,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.label_error_dat.clear()
         self.ui.label_error_list.clear()
         self.ui.table_list.clearContents()
+        self.ui.table_list.setRowCount(0)
     def Fill_db(self):
         Credent = Query()
         

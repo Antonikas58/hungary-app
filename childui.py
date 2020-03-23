@@ -1282,6 +1282,16 @@ class Ui_ChildWindow(object):
 "}")
         self.pushButton_send_list.setObjectName("pushButton_send_list")
         self.formLayout_4.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.pushButton_send_list)
+        self.label_error_list = QtWidgets.QLabel(self.getTransactionListTab)
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_error_list.setFont(font)
+        self.label_error_list.setText("")
+        self.label_error_list.setObjectName("label_error_list")
+        self.formLayout_4.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.label_error_list)
         self.table_list = QtWidgets.QTableWidget(self.getTransactionListTab)
         font = QtGui.QFont()
         font.setFamily("MS Sans Serif")
@@ -1360,17 +1370,39 @@ class Ui_ChildWindow(object):
         self.table_list.horizontalHeader().setMinimumSectionSize(39)
         self.table_list.horizontalHeader().setStretchLastSection(False)
         self.formLayout_4.setWidget(4, QtWidgets.QFormLayout.SpanningRole, self.table_list)
-        self.label_error_list = QtWidgets.QLabel(self.getTransactionListTab)
+        self.gridLayout_2.addLayout(self.formLayout_4, 3, 0, 1, 1)
+        self.pushButton_save_list = QtWidgets.QPushButton(self.getTransactionListTab)
         font = QtGui.QFont()
         font.setFamily("MS Sans Serif")
-        font.setPointSize(12)
+        font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
-        self.label_error_list.setFont(font)
-        self.label_error_list.setText("")
-        self.label_error_list.setObjectName("label_error_list")
-        self.formLayout_4.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.label_error_list)
-        self.gridLayout_2.addLayout(self.formLayout_4, 3, 0, 1, 1)
+        self.pushButton_save_list.setFont(font)
+        self.pushButton_save_list.setStyleSheet("QPushButton\n"
+"{\n"
+"    color: #b1b1b1;\n"
+"    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);\n"
+"    border-width: 1px;\n"
+"    border-color: #1e1e1e;\n"
+"    border-style: solid;\n"
+"    border-radius: 6;\n"
+"    padding: 3px;\n"
+"    padding-left: 5px;\n"
+"    padding-right: 5px;\n"
+"    min-width: 40px;\n"
+"}\n"
+"\n"
+"QPushButton:pressed\n"
+"{\n"
+"    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);\n"
+"}\n"
+"\n"
+"QComboBox:hover,QPushButton:hover\n"
+"{\n"
+"    border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);\n"
+"}")
+        self.pushButton_save_list.setObjectName("pushButton_save_list")
+        self.gridLayout_2.addWidget(self.pushButton_save_list, 4, 0, 1, 1)
         self.tabWidget.addTab(self.getTransactionListTab, "")
         self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
         ChildWindow.setCentralWidget(self.centralwidget)
@@ -1446,7 +1478,7 @@ class Ui_ChildWindow(object):
         ChildWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(ChildWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(ChildWindow)
 
     def retranslateUi(self, ChildWindow):
@@ -1559,4 +1591,5 @@ class Ui_ChildWindow(object):
         item.setText(_translate("ChildWindow", "Item count"))
         item = self.table_list.horizontalHeaderItem(4)
         item.setText(_translate("ChildWindow", "Status"))
+        self.pushButton_save_list.setText(_translate("ChildWindow", "Save"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.getTransactionListTab), _translate("ChildWindow", "Get transaction list"))

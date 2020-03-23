@@ -90,6 +90,7 @@ class Ui_MainWindow(object):
 "    border: 1px solid #1e1e1e;\n"
 "    border-radius: 5;\n"
 "}")
+        self.lineEdit_pass.setCursorPosition(0)
         self.lineEdit_pass.setObjectName("lineEdit_pass")
         self.gridLayout_2.addWidget(self.lineEdit_pass, 1, 1, 1, 3)
         self.label_name = QtWidgets.QLabel(self.centralwidget)
@@ -114,6 +115,7 @@ class Ui_MainWindow(object):
         font.setFamily("MS Sans Serif")
         font.setPointSize(14)
         self.lineEdit_name.setFont(font)
+        self.lineEdit_name.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.lineEdit_name.setStyleSheet("QLineEdit\n"
 "{\n"
 "    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4d4d4d, stop: 0 #646464, stop: 1 #5d5d5d);\n"
@@ -122,6 +124,7 @@ class Ui_MainWindow(object):
 "    border: 1px solid #1e1e1e;\n"
 "    border-radius: 5;\n"
 "}")
+        self.lineEdit_name.setCursorPosition(0)
         self.lineEdit_name.setObjectName("lineEdit_name")
         self.gridLayout_2.addWidget(self.lineEdit_name, 0, 1, 1, 3)
         self.lineEdit_addr = QtWidgets.QLineEdit(self.centralwidget)
@@ -155,7 +158,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.SeeButton.sizePolicy().hasHeightForWidth())
         self.SeeButton.setSizePolicy(sizePolicy)
-        self.SeeButton.setMinimumSize(QtCore.QSize(120, 0))
+        self.SeeButton.setMinimumSize(QtCore.QSize(52, 0))
         self.SeeButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.SeeButton.setBaseSize(QtCore.QSize(0, 0))
         font = QtGui.QFont()
@@ -206,7 +209,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.PingButton.sizePolicy().hasHeightForWidth())
         self.PingButton.setSizePolicy(sizePolicy)
-        self.PingButton.setMinimumSize(QtCore.QSize(0, 0))
+        self.PingButton.setMinimumSize(QtCore.QSize(52, 0))
         self.PingButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.PingButton.setBaseSize(QtCore.QSize(0, 0))
         font = QtGui.QFont()
@@ -247,7 +250,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.ContinueButton.sizePolicy().hasHeightForWidth())
         self.ContinueButton.setSizePolicy(sizePolicy)
-        self.ContinueButton.setMinimumSize(QtCore.QSize(0, 0))
+        self.ContinueButton.setMinimumSize(QtCore.QSize(52, 0))
         self.ContinueButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.ContinueButton.setBaseSize(QtCore.QSize(0, 0))
         font = QtGui.QFont()
@@ -283,7 +286,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.ContinueButton, 6, 4, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 21))
         self.menubar.setStyleSheet("QMenuBar::item\n"
 "{\n"
 "    background: transparent;\n"

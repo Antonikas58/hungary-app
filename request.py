@@ -5,6 +5,7 @@ import base64
 from xml.etree.ElementTree import Element, SubElement, Comment, tostring, ElementTree
 from lxml import etree as ET
 from xml.dom import minidom
+from xmlparser import Find_result_set
 
 def Ping( address, name, passw):
 
@@ -41,22 +42,44 @@ def CallCPI( address, name, passw, operation, direction, number,taxId, checkId, 
     except:
         return 'failed to call CPI. Please go to the main page and try to Ping tenant '
 
-async def CallCPI_Async( address, name, passw, operation, direction, number,taxId, checkId, dateFrom, dateTo, page ):
+async def CallCPI_Async( address, name, passw, operation, direction, number,taxId, checkId, dateFrom, dateTo, page, pages ):
 
     AuthData = name + ':' + passw
     base64Data = (base64.b64encode(AuthData.encode("utf-8"))).decode('utf-8')
     headers = {}
     headers['Content-Type'] = 'text/html;charset=utf-8'
     headers['Authorization'] = 'Basic ' + str(base64Data)
-    body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, str(page))
+    tasks = []
     
-   
-    async with aiohttp.ClientSession() as session:
-      async with session.post(address, data = body, headers = headers) as response:
-         return ((response.content._buffer[0]).decode('utf-8'))
+    try:
+        for page in range(int(page), int(pages) + 1):
+            body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, str(page))
+            task = asyncio.ensure_future(post(address, body, headers))
+            tasks.append(task)
+        responses = asyncio.gather(*tasks)
+        await responses    
+        return responses._result
+    except:
+        return 'failed to call CPI. Please go to the main page and try to Ping tenant '
 
-
-   
+async def post(address, body, headers):   
+     result_set = {} 
+     async with aiohttp.ClientSession() as session:
+              async with session.post(address, data = body, headers = headers) as response:
+                response = (response.content._buffer[0]).decode('utf-8')
+                try:
+                    result_set = Find_result_set(response)
+                    # make one extra call in case if iflow failed                   
+                    if result_set.get('ErrorText') != None:  
+                        try:
+                            response2 = requests.post(address, data = body,  headers=headers)   
+                            return ((response2.content).decode('utf-8'))
+                        except:    
+                            return response
+                    else:
+                        return response          
+                except:       
+                    return response
 def buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page):
     SOAP_NS = 'http://schemas.xmlsoap.org/soap/envelope/'
     ns_map = {'soap-env': SOAP_NS}  
