@@ -269,14 +269,16 @@ class mywindow(QtWidgets.QMainWindow):
     def table_save(self):
         path = QFileDialog.getSaveFileName(self, 'Save File', '', 'CSV(*.csv)')
         
-        with open(path[0], 'wb') as stream:
-                writer = csv.writer(stream)
+        with open(path[0], 'w') as stream:
+              
+                writer = csv.writer(stream, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL,)
+                writer.writerow(['Transaction ID', 'Date', 'request version', 'Item Count', 'Status'])
                 for row in range(self.ui.table_list.rowCount()):
                     rowdata = []
                     for column in range(self.ui.table_list.columnCount()):
                         item = self.ui.table_list.item(row, column)
                         if item is not None:
-                            rowdata.append( item.text() )
+                            rowdata.append( item.text())
                         else:
                             rowdata.append('')
                     writer.writerow(rowdata)
