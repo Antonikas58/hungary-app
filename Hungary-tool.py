@@ -82,6 +82,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_send_check.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send_check))
         self.ui.pushButton_send_dat.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send_dat))
         self.ui.pushButton_send_list.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_send_list))
+        self.ui.pushButton_get_st_list.clicked.connect(partial(self.SendToCPI, self.ui.pushButton_get_st_list))
         self.ui.pushButton_save_dat.clicked.connect(self.file_save)
         self.ui.pushButton_save_list.clicked.connect(self.table_save)
         self.ui.pushButton_clear.clicked.connect(self.clear_file)
@@ -103,7 +104,7 @@ class mywindow(QtWidgets.QMainWindow):
           
             self.result_set = {}
             self.Clear_labels()
-            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTaxpayer', '', '', self.ui.lineEdit_tax_id.text(), self.ui.lineEdit_check_id.text(),'','','')
+            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTaxpayer', '', '', self.ui.lineEdit_tax_id.text(), self.ui.lineEdit_check_id.text(),'','','','')
             try:
                 self.result_set = Find_result_set(resp)
                 self.ui.label_error.setText('Transmission Successfull. If result is empty - nothing was found')    
@@ -121,7 +122,7 @@ class mywindow(QtWidgets.QMainWindow):
           
             self.result_set = {}
             self.Clear_labels()
-            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceCheck', self.ui.comboBox_direction_check.currentText(), self.ui.lineEdit_inv_num_check.text(), self.ui.lineEdit_tax_id_check.text(),'','','','')
+            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceCheck', self.ui.comboBox_direction_check.currentText(), self.ui.lineEdit_inv_num_check.text(), self.ui.lineEdit_tax_id_check.text(),'','','','','')
             try:
                 self.result_set = Find_result_set(resp)
                 self.ui.label_error_check.setText('Transmission Successfull. If result is empty - nothing was found')
@@ -139,7 +140,7 @@ class mywindow(QtWidgets.QMainWindow):
           
             self.result_set = {}
             self.Clear_labels()
-            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceData', self.ui.comboBox_direction_dat.currentText(), self.ui.lineEdit_inv_num_dat.text(), self.ui.lineEdit_tax_id_dat.text(),'','','','')
+            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryInvoiceData', self.ui.comboBox_direction_dat.currentText(), self.ui.lineEdit_inv_num_dat.text(), self.ui.lineEdit_tax_id_dat.text(),'','','','','')
             try:
                 self.result_set = Find_result_set(resp)
                 self.ui.label_error_dat.setText('Transmission Successfull. If result is empty - nothing was found')     
@@ -153,6 +154,36 @@ class mywindow(QtWidgets.QMainWindow):
                 self.ui.label_error_dat.setText('Something went wrong during Iflow processing.Please go to CPI Tenant and check trace logs')
                 self.ui.label_error_dat.setStyleSheet('color: red')
                 
+        elif btn == self.ui.pushButton_get_st_list:    
+            transactions = []
+            nrows = self.ui.table_list.rowCount()
+            
+            for line in range(0,nrows):
+                row = []
+                row.append(line)
+                row.append((self.ui.table_list.item(line,0)).text())
+                transactions.append(row)
+            if transactions != []:    
+                ioloop = asyncio.get_event_loop()
+                future = asyncio.ensure_future(CallCPI_Async(self.addr, self.Usr, self.Pass, 'queryTransactionStatus', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), '', '','', transactions ))
+                resp = ioloop.run_until_complete(future)
+                for res in resp:
+                    try:
+                        self.result_set = Find_result_set(res[2])
+                        if self.result_set.get('ErrorText') != None:
+                            self.ui.label_error_list.setText('Some packages were lost during call. Please restart the process again to get all transactions')
+                            self.ui.label_error_list.setStyleSheet('color: red')
+                            self.ui.table_list.setItem(res[0] , 4, QtWidgets.QTableWidgetItem('NOT FOUND'))
+                        else:
+                            status = self.result_set.get('invoiceStatus')
+                            if status != '':
+                                self.ui.table_list.setItem(res[0] , 4, QtWidgets.QTableWidgetItem(status))
+                            else:
+                                self.ui.table_list.setItem(res[0] , 4, QtWidgets.QTableWidgetItem('NOT FOUND'))  
+                    except:
+                        self.ui.label_error_list.setText('failed to call CPI. Please go to the main page and try to Ping tenant')     
+                        self.ui.label_error_list.setStyleSheet('color: red') 
+          
         elif btn == self.ui.pushButton_send_list:
             
             self.ui.table_list.setRowCount(0)
@@ -162,7 +193,7 @@ class mywindow(QtWidgets.QMainWindow):
             page = '1'
             pages = ''
             # Make first call to get information if there are additional pages available
-            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page )
+            resp = CallCPI(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page, '' )
             try:
                 self.result_set = Find_result_set(resp)
                 if self.result_set.get('ErrorText') != None:
@@ -183,7 +214,7 @@ class mywindow(QtWidgets.QMainWindow):
             if pages != '' and int(page) < int(pages):     
                 page = str(int(page) + 1)
                 ioloop = asyncio.get_event_loop()
-                future = asyncio.ensure_future(CallCPI_Async(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page, int(pages) ))
+                future = asyncio.ensure_future(CallCPI_Async(self.addr, self.Usr, self.Pass, 'queryTransactionList', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), page, int(pages),'', '' ))
                 resp = ioloop.run_until_complete(future)
             
                 for res in resp:
@@ -212,7 +243,7 @@ class mywindow(QtWidgets.QMainWindow):
               #          self.ui.label_error_list.setStyleSheet('color: red') 
               #          self.result_list = []
                 
-
+        
     def FillLabels(self):
         self.ui.label_val_.setText(self.result_set.get('taxpayerValidity'))
         self.ui.label_name.setText(self.result_set.get('taxpayerName'))

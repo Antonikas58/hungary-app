@@ -1174,6 +1174,38 @@ class Ui_ChildWindow(object):
         self.getTransactionListTab.setObjectName("getTransactionListTab")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.getTransactionListTab)
         self.gridLayout_2.setObjectName("gridLayout_2")
+        self.pushButton_save_list = QtWidgets.QPushButton(self.getTransactionListTab)
+        font = QtGui.QFont()
+        font.setFamily("MS Sans Serif")
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.pushButton_save_list.setFont(font)
+        self.pushButton_save_list.setStyleSheet("QPushButton\n"
+"{\n"
+"    color: #b1b1b1;\n"
+"    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);\n"
+"    border-width: 1px;\n"
+"    border-color: #1e1e1e;\n"
+"    border-style: solid;\n"
+"    border-radius: 6;\n"
+"    padding: 3px;\n"
+"    padding-left: 5px;\n"
+"    padding-right: 5px;\n"
+"    min-width: 40px;\n"
+"}\n"
+"\n"
+"QPushButton:pressed\n"
+"{\n"
+"    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);\n"
+"}\n"
+"\n"
+"QComboBox:hover,QPushButton:hover\n"
+"{\n"
+"    border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);\n"
+"}")
+        self.pushButton_save_list.setObjectName("pushButton_save_list")
+        self.gridLayout_2.addWidget(self.pushButton_save_list, 4, 0, 1, 1)
         self.formLayout_4 = QtWidgets.QFormLayout()
         self.formLayout_4.setObjectName("formLayout_4")
         self.label_3 = QtWidgets.QLabel(self.getTransactionListTab)
@@ -1371,14 +1403,14 @@ class Ui_ChildWindow(object):
         self.table_list.horizontalHeader().setStretchLastSection(False)
         self.formLayout_4.setWidget(4, QtWidgets.QFormLayout.SpanningRole, self.table_list)
         self.gridLayout_2.addLayout(self.formLayout_4, 3, 0, 1, 1)
-        self.pushButton_save_list = QtWidgets.QPushButton(self.getTransactionListTab)
+        self.pushButton_get_st_list = QtWidgets.QPushButton(self.getTransactionListTab)
         font = QtGui.QFont()
         font.setFamily("MS Sans Serif")
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
-        self.pushButton_save_list.setFont(font)
-        self.pushButton_save_list.setStyleSheet("QPushButton\n"
+        self.pushButton_get_st_list.setFont(font)
+        self.pushButton_get_st_list.setStyleSheet("QPushButton\n"
 "{\n"
 "    color: #b1b1b1;\n"
 "    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);\n"
@@ -1401,8 +1433,8 @@ class Ui_ChildWindow(object):
 "{\n"
 "    border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);\n"
 "}")
-        self.pushButton_save_list.setObjectName("pushButton_save_list")
-        self.gridLayout_2.addWidget(self.pushButton_save_list, 4, 0, 1, 1)
+        self.pushButton_get_st_list.setObjectName("pushButton_get_st_list")
+        self.gridLayout_2.addWidget(self.pushButton_get_st_list, 5, 0, 1, 1)
         self.tabWidget.addTab(self.getTransactionListTab, "")
         self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
         ChildWindow.setCentralWidget(self.centralwidget)
@@ -1576,6 +1608,7 @@ class Ui_ChildWindow(object):
         self.pushButton_clear.setToolTip(_translate("ChildWindow", "<html><head/><body><p>clear current response</p></body></html>"))
         self.pushButton_clear.setText(_translate("ChildWindow", "Clear"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.getInvoiceDataTab), _translate("ChildWindow", "Get invoice data"))
+        self.pushButton_save_list.setText(_translate("ChildWindow", "Save"))
         self.label_3.setText(_translate("ChildWindow", "Taxpayer ID:"))
         self.label_4.setText(_translate("ChildWindow", "Date from:"))
         self.label_5.setText(_translate("ChildWindow", "Date to:"))
@@ -1591,5 +1624,5 @@ class Ui_ChildWindow(object):
         item.setText(_translate("ChildWindow", "Item count"))
         item = self.table_list.horizontalHeaderItem(4)
         item.setText(_translate("ChildWindow", "Status"))
-        self.pushButton_save_list.setText(_translate("ChildWindow", "Save"))
+        self.pushButton_get_st_list.setText(_translate("ChildWindow", "Get Statuses"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.getTransactionListTab), _translate("ChildWindow", "Get transaction list"))

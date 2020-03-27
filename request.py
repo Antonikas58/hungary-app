@@ -23,14 +23,14 @@ def Ping( address, name, passw):
     except:
         return False  
       
-def CallCPI( address, name, passw, operation, direction, number,taxId, checkId, dateFrom, dateTo, page ):
+def CallCPI( address, name, passw, operation, direction, number,taxId, checkId, dateFrom, dateTo, page, transactionId ):
 
     AuthData = name + ':' + passw
     base64Data = (base64.b64encode(AuthData.encode("utf-8"))).decode('utf-8')
     headers = {}
     headers['Content-Type'] = 'text/html;charset=utf-8'
     headers['Authorization'] = 'Basic ' + str(base64Data)
-    body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page)
+    body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page, transactionId)
 
     try:
         response = requests.post(address, data = body,  headers=headers)
@@ -42,7 +42,7 @@ def CallCPI( address, name, passw, operation, direction, number,taxId, checkId, 
     except:
         return 'failed to call CPI. Please go to the main page and try to Ping tenant '
 
-async def CallCPI_Async( address, name, passw, operation, direction, number,taxId, checkId, dateFrom, dateTo, page, pages ):
+async def CallCPI_Async( address, name, passw, operation, direction, number,taxId, checkId, dateFrom, dateTo, page, pages, transactionId, transactions ):
 
     AuthData = name + ':' + passw
     base64Data = (base64.b64encode(AuthData.encode("utf-8"))).decode('utf-8')
@@ -52,35 +52,62 @@ async def CallCPI_Async( address, name, passw, operation, direction, number,taxI
     tasks = []
     
     try:
-        for page in range(int(page), int(pages) + 1):
-            body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, str(page))
-            task = asyncio.ensure_future(post(address, body, headers))
-            tasks.append(task)
-        responses = asyncio.gather(*tasks)
-        await responses    
-        return responses._result
+        if transactions != '':
+            
+            for transaction in transactions:
+                body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, str(page), transaction[1]) 
+                task = asyncio.ensure_future(post(address, body, headers, transaction = transaction[1], line = transaction[0]))
+                tasks.append(task)
+            responses = asyncio.gather(*tasks)
+            await responses    
+            return responses._result
+        else:  
+            for page in range(int(page), int(pages) + 1):
+                body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, str(page), transactionId)
+                task = asyncio.ensure_future(post(address, body, headers))
+                tasks.append(task)
+            responses = asyncio.gather(*tasks)
+            await responses    
+            return responses._result
     except:
         return 'failed to call CPI. Please go to the main page and try to Ping tenant '
 
-async def post(address, body, headers):   
+async def post(address, body, headers, *args, **kwargs):   
      result_set = {} 
+     transaction = kwargs.get('transaction', None)
+     line = kwargs.get('line', None)
      async with aiohttp.ClientSession() as session:
               async with session.post(address, data = body, headers = headers) as response:
-                response = (response.content._buffer[0]).decode('utf-8')
+                if transaction != None:
+                    returning = []
+                    returning.append(line)
+                    returning.append(transaction)
+                    returning.append((response.content._buffer[0]).decode('utf-8'))
+                    response = returning
+                else:
+                    response = (response.content._buffer[0]).decode('utf-8')  
                 try:
                     result_set = Find_result_set(response)
                     # make one extra call in case if iflow failed                   
                     if result_set.get('ErrorText') != None:  
                         try:
-                            response2 = requests.post(address, data = body,  headers=headers)   
-                            return ((response2.content).decode('utf-8'))
+                            response2 = requests.post(address, data = body,  headers=headers) 
+                            if transaction != None:
+                                returning = []
+                                returning.append(line)
+                                returning.append(transaction)
+                                returning.append((response2.content).decode('utf-8'))
+                                response2 = returning
+                            else:
+                                response2 = (response2.content).decode('utf-8')   
+                            return response2
                         except:    
                             return response
                     else:
                         return response          
                 except:       
                     return response
-def buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page):
+def buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page, transactionId):
     SOAP_NS = 'http://schemas.xmlsoap.org/soap/envelope/'
     ns_map = {'soap-env': SOAP_NS}  
     ET.register_namespace('soap-env',"http://schemas.xmlsoap.org/soap/envelope/") 
@@ -117,4 +144,6 @@ def buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, pa
     child12.text = dateTo
     child13 = ET.SubElement(top, 'Page')
     child13.text = page
+    child14 = ET.SubElement(top, 'TransactionId')
+    child14.text = transactionId
     return((ET.tostring(env).decode('utf-8')))
