@@ -160,9 +160,16 @@ class mywindow(QtWidgets.QMainWindow):
             
             for line in range(0,nrows):
                 row = []
-                row.append(line)
-                row.append((self.ui.table_list.item(line,0)).text())
-                transactions.append(row)
+                try:
+                    status = (self.ui.table_list.item(line,4)).text() 
+                    if status == '' or status == 'NOT FOUND':
+                        row.append(line)
+                        row.append((self.ui.table_list.item(line,0)).text())
+                        transactions.append(row)
+                except:
+                    row.append(line)
+                    row.append((self.ui.table_list.item(line,0)).text())
+                    transactions.append(row)      
             if transactions != []:    
                 ioloop = asyncio.get_event_loop()
                 future = asyncio.ensure_future(CallCPI_Async(self.addr, self.Usr, self.Pass, 'queryTransactionStatus', '', '', self.ui.lineEdit_id_list.text(),'',self.ui.TimeEdit_from_list.text(),self.ui.TimeEdit_to_list.text(), '', '','', transactions ))
@@ -179,12 +186,15 @@ class mywindow(QtWidgets.QMainWindow):
                             if status != '':
                                 self.ui.table_list.setItem(res[0] , 4, QtWidgets.QTableWidgetItem(status))
                             else:
+                                self.ui.label_error_list.setText('Some packages were lost during call. Please restart the process again to get all transactions')     
+                                self.ui.label_error_list.setStyleSheet('color: red') 
                                 self.ui.table_list.setItem(res[0] , 4, QtWidgets.QTableWidgetItem('NOT FOUND'))  
                     except:
-                        self.ui.label_error_list.setText('failed to call CPI. Please go to the main page and try to Ping tenant')     
+                        self.ui.label_error_list.setText('Some packages were lost during call. Please restart the process again to get all transactions')     
                         self.ui.label_error_list.setStyleSheet('color: red') 
-                        self.ui.table_list.setItem(res[0] , 4, QtWidgets.QTableWidgetItem('NOT FOUND')) 
-          
+            else:            
+                self.ui.label_error_list.setText('Transmission Successfull. If result is empty - nothing was found')     
+                self.ui.label_error_list.setStyleSheet('color: green')       
         elif btn == self.ui.pushButton_send_list:
             
             self.ui.table_list.setRowCount(0)

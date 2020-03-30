@@ -61,7 +61,7 @@ async def CallCPI_Async( address, name, passw, operation, direction, number,taxI
             responses = asyncio.gather(*tasks)
             await responses    
             return responses._result
-        else:  
+        elif pages != '':  
             for page in range(int(page), int(pages) + 1):
                 body = buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, str(page), transactionId)
                 task = asyncio.ensure_future(post(address, body, headers))
@@ -76,38 +76,42 @@ async def post(address, body, headers, *args, **kwargs):
      result_set = {} 
      transaction = kwargs.get('transaction', None)
      line = kwargs.get('line', None)
+     concatenation = ''
      async with aiohttp.ClientSession() as session:
               async with session.post(address, data = body, headers = headers) as response:
                 if transaction != None:
                     returning = []
                     returning.append(line)
                     returning.append(transaction)
-                    returning.append((response.content._buffer[0]).decode('utf-8'))
+                    for buffer in range(len(response.content._buffer)):
+                        concatenation = concatenation + response.content._buffer[buffer].decode('utf-8')
+                    returning.append(concatenation)
                     response = returning
                 else:
-                    response = (response.content._buffer[0]).decode('utf-8')  
+                    for buffer in range(len(response.content._buffer)):
+                        concatenation = concatenation + response.content._buffer[buffer].decode('utf-8')
+                    response = (concatenation)  
                 try:
                     result_set = Find_result_set(response)
+                    # make one extra call in case if iflow failed                   
+                    if result_set.get('ErrorText') != None:  
+                        try:
+                            response2 = requests.post(address, data = body,  headers=headers) 
+                            if transaction != None:
+                                returning = []
+                                returning.append(line)
+                                returning.append(transaction)
+                                returning.append((response2.content).decode('utf-8'))
+                                response2 = returning
+                            else:
+                                response2 = (response2.content).decode('utf-8')   
+                            return response2
+                        except:    
+                            return response
+                    else:
+                        return response          
                 except:       
-                    result_set = {}  
-                    # make  extra call in case if iflow failed                   
-                if result_set.get('ErrorText') != None or result_set == {}:  
-                    try:
-                        response2 = requests.post(address, data = body,  headers=headers) 
-                        if transaction != None:
-                            returning = []
-                            returning.append(line)
-                            returning.append(transaction)
-                            returning.append((response2.content).decode('utf-8'))
-                            response2 = returning
-                        else:
-                            response2 = (response2.content).decode('utf-8')   
-                        return response2
-                    except:    
-                        return response
-                else:
-                    return response          
-                
+                    return response
 def buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page, transactionId):
     SOAP_NS = 'http://schemas.xmlsoap.org/soap/envelope/'
     ns_map = {'soap-env': SOAP_NS}  
