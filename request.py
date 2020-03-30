@@ -88,25 +88,26 @@ async def post(address, body, headers, *args, **kwargs):
                     response = (response.content._buffer[0]).decode('utf-8')  
                 try:
                     result_set = Find_result_set(response)
-                    # make one extra call in case if iflow failed                   
-                    if result_set.get('ErrorText') != None:  
-                        try:
-                            response2 = requests.post(address, data = body,  headers=headers) 
-                            if transaction != None:
-                                returning = []
-                                returning.append(line)
-                                returning.append(transaction)
-                                returning.append((response2.content).decode('utf-8'))
-                                response2 = returning
-                            else:
-                                response2 = (response2.content).decode('utf-8')   
-                            return response2
-                        except:    
-                            return response
-                    else:
-                        return response          
                 except:       
-                    return response
+                    result_set = {}  
+                    # make  extra call in case if iflow failed                   
+                if result_set.get('ErrorText') != None or result_set == {}:  
+                    try:
+                        response2 = requests.post(address, data = body,  headers=headers) 
+                        if transaction != None:
+                            returning = []
+                            returning.append(line)
+                            returning.append(transaction)
+                            returning.append((response2.content).decode('utf-8'))
+                            response2 = returning
+                        else:
+                            response2 = (response2.content).decode('utf-8')   
+                        return response2
+                    except:    
+                        return response
+                else:
+                    return response          
+                
 def buildBody(operation, direction, number, checkId, taxId, dateFrom, dateTo, page, transactionId):
     SOAP_NS = 'http://schemas.xmlsoap.org/soap/envelope/'
     ns_map = {'soap-env': SOAP_NS}  

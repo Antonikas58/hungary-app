@@ -183,6 +183,7 @@ class mywindow(QtWidgets.QMainWindow):
                     except:
                         self.ui.label_error_list.setText('failed to call CPI. Please go to the main page and try to Ping tenant')     
                         self.ui.label_error_list.setStyleSheet('color: red') 
+                        self.ui.table_list.setItem(res[0] , 4, QtWidgets.QTableWidgetItem('NOT FOUND')) 
           
         elif btn == self.ui.pushButton_send_list:
             
